@@ -44,15 +44,16 @@ build:docker:
   stage: build
   image: docker:24.0.7
   services:
-    - docker:24.0.7-dind
+    - name: docker:24.0.7-dind
+      alias: docker
   variables:
-    DOCKER_TLS_CERTDIR: "/docker"
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
   before_script:
-    # Autenticación automática con el registro de imágenes de GitLab
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
     - echo "Compilando la imagen de Docker..."
-    # Etiquetado dual: tag con el SHA del commit y tag 'latest'
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:latest ./app
     - echo "Publicando imágenes en GitLab Container Registry..."
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA

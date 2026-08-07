@@ -27,33 +27,36 @@ Proyecto integral de automatización DevSecOps para el ciclo de vida de desarrol
 ## 🏗️ Arquitectura del Pipeline y Sistema
 
 ```mermaid
-flowchart TD
-    subgraph Dev["Entorno de Desarrollo"]
+graph TD
+    subgraph Dev ["Entorno de Desarrollo"]
         PUSH["Developer Push"]
     end
 
-    subgraph CI["Dual CI/CD Pipeline (GitLab CI & GitHub Actions)"]
-        S1["1. Stage: Linting"]
-        S2["2. Stage: Build"]
-        S3["3. Stage: Security"]
-        S4["4. Stage: Continuous Deployment"]
-        S5["5. Stage: Observability"]
+    subgraph CI ["Pipeline CI/CD Dual"]
+        S1["1. Linting Stage"]
+        S2["2. Build Stage"]
+        S3["3. Security Stage"]
+        S4["4. Deploy Stage"]
+        S5["5. Observability Stage"]
 
-        S1 --> S2 --> S3 --> S4 --> S5
+        S1 --> S2
+        S2 --> S3
+        S3 --> S4
+        S4 --> S5
     end
 
-    subgraph Infra["Infraestructura & Orquestación"]
-        DOCKER["Docker Container API"]
-        TF["Terraform IaC Module"]
-        K8S["Kubernetes / Helm Chart"]
-        PROM["Prometheus Scrape Metrics"]
+    subgraph Infra ["Infraestructura y Orquestacion"]
+        DOCKER["Docker Container"]
+        TF["Terraform IaC"]
+        K8S["Kubernetes Cluster"]
+        PROM["Prometheus Metrics"]
 
         TF --> DOCKER
         K8S --> PROM
     end
 
-    PUSH -->|"Git Dual Push"| S1
-    S4 -.->|"Helm Deploy"| K8S
+    PUSH --> S1
+    S4 --> K8S
 🛡️ Matriz de Control DevSecOpsEtapaHerramientaFunción / ObjetivoCode Lintingflake8Análisis estático de estándares PEP8 en código PythonShell AuditshellcheckValidación de sintaxis y seguridad en scripts BashDockerfile SecurityhadolintAuditoría de buenas prácticas en imágenes de contenedorIaC Qualityterraform fmt / validateVerificación declarativa de módulos de TerraformHelm Lintinghelm lintValidación de sintaxis del paquete HelmContainer CVE ScanTrivyDetección de vulnerabilidades de SO y librerías en imágenesIaC Security ScanTrivy ConfigEscaneo de fallos de seguridad en Terraform y K8s ManifestsObservabilidadPrometheus ClientExposición de métricas HTTP (/metrics) y estados de salud (/health)📁 Estructura del RepositorioPlaintextdevops-portfolio-project/
 ├── .github/
 │   └── workflows/

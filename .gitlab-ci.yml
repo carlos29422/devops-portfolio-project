@@ -1,8 +1,17 @@
+# ==============================================================================
+# GitLab CI/CD Pipeline - DevSecOps Quality, Linting & Build
+# ==============================================================================
+
 default:
   image: alpine:3.19
 
 stages:
   - lint
+  - build
+
+# -----------------------------------------------------------------------------
+# STAGE 1: Linting & Análisis Estático
+# -----------------------------------------------------------------------------
 
 lint:bash:
   stage: lint
@@ -26,3 +35,25 @@ lint:python:
   script:
     - echo "Iniciando análisis estático del código Python..."
     - flake8 app/main.py --max-line-length=120 --ignore=E501,W503,W292
+
+# -----------------------------------------------------------------------------
+# STAGE 2: Build & Push a GitLab Container Registry
+# -----------------------------------------------------------------------------
+
+build:docker:
+  stage: build
+  image: docker:24.0.7
+  services:
+    - docker:24.0.7-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/docker"
+  before_script:
+    # Autenticación automática con el registro de imágenes de GitLab
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - echo "Compilando la imagen de Docker..."
+    # Etiquetado dual: tag con el SHA del commit y tag 'latest'
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:latest ./app
+    - echo "Publicando imágenes en GitLab Container Registry..."
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest

@@ -1,5 +1,5 @@
 # ==============================================================================
-# GitLab CI/CD Pipeline - DevSecOps Quality, Build & Security Audit
+# GitLab CI/CD Pipeline - DevSecOps Quality, Build, Security & IaC Scan
 # ==============================================================================
 
 default:
@@ -37,6 +37,16 @@ lint:python:
     - echo "Iniciando análisis estático del código Python..."
     - flake8 app/main.py --max-line-length=120 --ignore=E501,W503,W292
 
+lint:terraform:
+  stage: lint
+  image: hashicorp/terraform:1.5.7
+  script:
+    - echo "Verificando formato y sintaxis de Terraform..."
+    - cd terraform
+    - terraform fmt -check
+    - terraform init -backend=false
+    - terraform validate
+
 # -----------------------------------------------------------------------------
 # STAGE 2: Build & Push a GitLab Container Registry
 # -----------------------------------------------------------------------------
@@ -61,10 +71,10 @@ build:docker:
     - docker push $CI_REGISTRY_IMAGE:latest
 
 # -----------------------------------------------------------------------------
-# STAGE 3: Security - Escaneo de Vulnerabilidades (Trivy Container Scan)
+# STAGE 3: Security - Escaneo de Vulnerabilidades e IaC Audit
 # -----------------------------------------------------------------------------
 
-security:trivy:
+security:trivy-container:
   stage: security
   image:
     name: aquasec/trivy:latest
@@ -72,9 +82,16 @@ security:trivy:
   variables:
     GIT_STRATEGY: none
   before_script:
-    # Autenticación para descargar la imagen privada del Container Registry
     - trivy registry login --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - echo "Iniciando escaneo de seguridad CVE en la imagen $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA..."
-    # Muestra reporte en consola de vulnerabilidades HIGH y CRITICAL
+    - echo "Iniciando escaneo CVE en la imagen $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA..."
     - trivy image --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+security:iac-scan:
+  stage: security
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - echo "Iniciando análisis estático de seguridad en código IaC (Terraform)..."
+    - trivy config terraform/

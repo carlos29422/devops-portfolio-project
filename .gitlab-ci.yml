@@ -1,5 +1,5 @@
 # ==============================================================================
-# GitLab CI/CD Pipeline - DevSecOps Quality, Linting & Build
+# GitLab CI/CD Pipeline - DevSecOps Quality, Build & Security Audit
 # ==============================================================================
 
 default:
@@ -8,6 +8,7 @@ default:
 stages:
   - lint
   - build
+  - security
 
 # -----------------------------------------------------------------------------
 # STAGE 1: Linting & Análisis Estático
@@ -58,3 +59,22 @@ build:docker:
     - echo "Publicando imágenes en GitLab Container Registry..."
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker push $CI_REGISTRY_IMAGE:latest
+
+# -----------------------------------------------------------------------------
+# STAGE 3: Security - Escaneo de Vulnerabilidades (Trivy Container Scan)
+# -----------------------------------------------------------------------------
+
+security:trivy:
+  stage: security
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    # Autenticación para descargar la imagen privada del Container Registry
+    - trivy registry login --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - echo "Iniciando escaneo de seguridad CVE en la imagen $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA..."
+    # Muestra reporte en consola de vulnerabilidades HIGH y CRITICAL
+    - trivy image --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA

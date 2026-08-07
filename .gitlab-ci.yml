@@ -49,6 +49,15 @@ lint:terraform:
     - terraform init -backend=false
     - terraform validate
 
+lint:helm:
+  stage: lint
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: [""]
+  script:
+    - echo "Validando sintaxis del Helm Chart..."
+    - helm lint helm/portfolio-api/
+
 # -----------------------------------------------------------------------------
 # STAGE 2: Build & Push a GitLab Container Registry
 # -----------------------------------------------------------------------------

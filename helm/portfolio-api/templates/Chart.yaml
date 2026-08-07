@@ -1,0 +1,8 @@
+apiVersion: v2
+name: portfolio-api
+description: Helm Chart para la API del Portfolio DevSecOps
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Carlos Nuñez

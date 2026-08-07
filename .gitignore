@@ -1,0 +1,29 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Secrets & Environment
+*.env
+*.pem
+*.key
+credentials.json
+*.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Python / Apps
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Logs
+*.log

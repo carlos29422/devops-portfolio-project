@@ -1,3 +1,4 @@
+# app/main.py
 import os
 import time
 from flask import Flask, jsonify, request
@@ -5,7 +6,10 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 
 app = Flask(__name__)
 
-# Métricas de Prometheus (Estándar DevSecOps / Observabilidad)
+# ==============================================================================
+# Métricas de Prometheus (DevSecOps / Observabilidad)
+# ==============================================================================
+
 REQUEST_COUNT = Counter(
     'http_requests_total',
     'Total de peticiones HTTP procesadas',
@@ -19,6 +23,10 @@ REQUEST_LATENCY = Histogram(
 )
 
 
+# ==============================================================================
+# Rutas y Endpoints
+# ==============================================================================
+
 @app.route('/')
 def root():
     start_time = time.time()
@@ -27,7 +35,7 @@ def root():
         "service": "devops-portfolio-api",
         "version": "1.0.0",
         "status": "running",
-        "environment": "development"
+        "environment": os.getenv("ENVIRONMENT", "development")
     }
 
     duration = time.time() - start_time
@@ -57,6 +65,10 @@ def metrics():
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
+# ==============================================================================
+# Punto de Entrada
+# ==============================================================================
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)

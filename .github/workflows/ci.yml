@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: DevSecOps CI/CD Pipeline
 
 on:
@@ -116,3 +117,21 @@ jobs:
       - name: Render Helm Prod Manifests
         run: |
           helm template portfolio-api-prod helm/portfolio-api/ -f helm/portfolio-api/values-prod.yaml --set image.tag=${{ github.sha }}
+
+  post-deploy:
+    name: Post-Deploy Smoke & Metrics Test
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+
+      - name: Verify Prometheus Annotations in Rendered Helm Chart
+        run: |
+          helm template test-release helm/portfolio-api/ | grep "prometheus.io/scrape: \"true\""
+          echo "Anotaciones de observabilidad validadas correctamente."

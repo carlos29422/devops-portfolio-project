@@ -27,19 +27,37 @@ Proyecto integral de automatización DevSecOps para el ciclo de vida de desarrol
 ## 🏗️ Arquitectura del Pipeline y Sistema
 
 ```mermaid
-flowchart TD
-    Dev[Developer Push] --> Lint[1. Linting Stage]
-    Lint --> Build[2. Build Stage]
-    Build --> Sec[3. Security Stage]
-    Sec --> Deploy[4. Continuous Deployment]
-    Deploy --> Obs[5. Observability Stage]
-    Deploy --> K8s[Kubernetes Cluster]
-    K8s --> Prom[Prometheus Metrics]
+graph TD
+    A["Developer Push"] --> B["1. Linting Stage"]
+    B --> C["2. Build Stage"]
+    C --> D["3. Security Stage"]
+    D --> E["4. Continuous Deployment"]
+    E --> F["5. Observability Stage"]
+    E --> G["Kubernetes Cluster"]
+    G --> H["Prometheus Metrics"]
 ```
 
 ---
 
-🛡️ Matriz de Control DevSecOpsEtapaHerramientaFunción / ObjetivoCode Lintingflake8Análisis estático de estándares PEP8 en código PythonShell AuditshellcheckValidación de sintaxis y seguridad en scripts BashDockerfile SecurityhadolintAuditoría de buenas prácticas en imágenes de contenedorIaC Qualityterraform fmt / validateVerificación declarativa de módulos de TerraformHelm Lintinghelm lintValidación de sintaxis del paquete HelmContainer CVE ScanTrivyDetección de vulnerabilidades de SO y librerías en imágenesIaC Security ScanTrivy ConfigEscaneo de fallos de seguridad en Terraform y K8s ManifestsObservabilidadPrometheus ClientExposición de métricas HTTP (/metrics) y estados de salud (/health)📁 Estructura del RepositorioPlaintextdevops-portfolio-project/
+## 🛡️ Matriz de Control DevSecOps
+
+| Etapa | Herramienta | Función / Objetivo |
+| :--- | :--- | :--- |
+| **Code Linting** | `flake8` | Análisis estático de estándares PEP8 en código Python |
+| **Shell Audit** | `shellcheck` | Validación de sintaxis y seguridad en scripts Bash |
+| **Dockerfile Security** | `hadolint` | Auditoría de buenas prácticas en imágenes de contenedor |
+| **IaC Quality** | `terraform fmt` / `validate` | Verificación declarativa de módulos de Terraform |
+| **Helm Linting** | `helm lint` | Validación de sintaxis del paquete Helm |
+| **Container CVE Scan** | `Trivy` | Detección de vulnerabilidades de SO y librerías en imágenes |
+| **IaC Security Scan** | `Trivy Config` | Escaneo de fallos de seguridad en Terraform y K8s Manifests |
+| **Observabilidad** | `Prometheus Client` | Exposición de métricas HTTP (`/metrics`) y estados de salud (`/health`) |
+
+---
+
+## 📁 Estructura del Repositorio
+
+```text
+devops-portfolio-project/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml               # Pipeline para GitHub Actions
@@ -68,19 +86,49 @@ flowchart TD
 │   ├── provider.tf
 │   └── variables.tf
 └── README.md
-🚀 Guía de Ejecución LocalPrerrequisitosDocker Desktop 24+ (con motor Kubernetes activado)Terraform 1.5+Helm 3.14+Python 3.11+1. Ejecutar la API Localmente con DockerBashdocker build -t portfolio-api:local ./app
-docker run -d -p 8080:8080 portfolio-api:local
+```
 
-# Probar Endpoints
+---
+
+## 🚀 Guía de Ejecución Local
+
+### Prerrequisitos
+* **Docker Desktop 24+** (con motor Kubernetes activado)
+* **Terraform 1.5+**
+* **Helm 3.14+**
+* **Python 3.11+**
+
+### 1. Ejecutar la API Localmente con Docker
+```bash
+docker build -t portfolio-api:local ./app
+docker run -d -p 8080:8080 portfolio-api:local
+```
+
+### 2. Probar Endpoints
+```bash
 curl http://localhost:8080/
 curl http://localhost:8080/health
 curl http://localhost:8080/metrics
-2. Aprovisionar Infraestructura con TerraformBashcd terraform
+```
+
+### 3. Aprovisionar Infraestructura con Terraform
+```bash
+cd terraform
 terraform init
 terraform apply -var="app_port=8081" -auto-approve
-3. Desplegar en Kubernetes usando HelmBash# Entorno de Desarrollo
+```
+
+### 4. Desplegar en Kubernetes usando Helm
+```bash
+# Entorno de Desarrollo
 helm install api-dev ./helm/portfolio-api/ -f ./helm/portfolio-api/values-dev.yaml
 
 # Entorno de Producción
 helm install api-prod ./helm/portfolio-api/ -f ./helm/portfolio-api/values-prod.yaml
-✒️ AutorCarlos Nuñez - DevOps & Systems Engineer
+```
+
+---
+
+## ✒️ Autor
+
+* **Carlos Nuñez** - DevOps & Systems Engineer

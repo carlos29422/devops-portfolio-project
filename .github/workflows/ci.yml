@@ -79,10 +79,10 @@ jobs:
           vuln-type: 'os,library'
           severity: 'HIGH,CRITICAL'
 
-      - name: Run Trivy IaC Scanner (Terraform)
+      - name: Run Trivy IaC Scanner (Terraform & K8s)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
-          scan-ref: 'terraform/'
+          scan-ref: '.'
           format: 'table'
           exit-code: '0'

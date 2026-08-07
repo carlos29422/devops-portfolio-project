@@ -40,8 +40,8 @@ lint:python:
 lint:terraform:
   stage: lint
   image:
-      name: hashicorp/terraform:1.5.7
-      entrypoint: [""]
+    name: hashicorp/terraform:1.5.7
+    entrypoint: [""]
   script:
     - echo "Verificando formato y sintaxis de Terraform..."
     - cd terraform
@@ -95,5 +95,6 @@ security:iac-scan:
     name: aquasec/trivy:latest
     entrypoint: [""]
   script:
-    - echo "Iniciando análisis estático de seguridad en código IaC (Terraform)..."
+    - echo "Iniciando análisis estático de seguridad en código IaC (Terraform y K8s)..."
     - trivy config terraform/
+    - trivy config k8s/

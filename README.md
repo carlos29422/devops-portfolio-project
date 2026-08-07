@@ -29,32 +29,31 @@ Proyecto integral de automatización DevSecOps para el ciclo de vida de desarrol
 ```mermaid
 flowchart TD
     subgraph Dev["Entorno de Desarrollo"]
-        PUSH[Developer Push]
+        PUSH["Developer Push"]
     end
 
-    subgraph Dual_CI["Dual CI/CD Pipeline (GitLab CI & GitHub Actions)"]
-        direction TB
-        S1["1. Stage: Linting<br/>(Flake8, ShellCheck, Hadolint, Terraform, Helm)"]
-        S2["2. Stage: Build<br/>(Docker Build & Container Registry Push)"]
-        S3["3. Stage: Security<br/>(Trivy CVE Image Scan & Trivy IaC Audit)"]
-        S4["4. Stage: Continuous Deployment<br/>(Helm Template Multi-Env Render)"]
-        S5["5. Stage: Observability & Smoke Tests<br/>(Prometheus Scrape Annotations Check)"]
+    subgraph CI["Dual CI/CD Pipeline (GitLab CI & GitHub Actions)"]
+        S1["1. Stage: Linting"]
+        S2["2. Stage: Build"]
+        S3["3. Stage: Security"]
+        S4["4. Stage: Continuous Deployment"]
+        S5["5. Stage: Observability"]
 
         S1 --> S2 --> S3 --> S4 --> S5
     end
 
     subgraph Infra["Infraestructura & Orquestación"]
-        DOCKER[Docker Container API]
-        TF[Terraform IaC Module]
-        K8S[Kubernetes Cluster / Helm Chart]
-        PROM[Prometheus Scrape /metrics]
+        DOCKER["Docker Container API"]
+        TF["Terraform IaC Module"]
+        K8S["Kubernetes / Helm Chart"]
+        PROM["Prometheus Scrape Metrics"]
 
         TF --> DOCKER
         K8S --> PROM
     end
 
-    PUSH -->|Git Dual Push| Dual_CI
-    S4 -.->|Despliegue| K8S
+    PUSH -->|"Git Dual Push"| S1
+    S4 -.->|"Helm Deploy"| K8S
 🛡️ Matriz de Control DevSecOpsEtapaHerramientaFunción / ObjetivoCode Lintingflake8Análisis estático de estándares PEP8 en código PythonShell AuditshellcheckValidación de sintaxis y seguridad en scripts BashDockerfile SecurityhadolintAuditoría de buenas prácticas en imágenes de contenedorIaC Qualityterraform fmt / validateVerificación declarativa de módulos de TerraformHelm Lintinghelm lintValidación de sintaxis del paquete HelmContainer CVE ScanTrivyDetección de vulnerabilidades de SO y librerías en imágenesIaC Security ScanTrivy ConfigEscaneo de fallos de seguridad en Terraform y K8s ManifestsObservabilidadPrometheus ClientExposición de métricas HTTP (/metrics) y estados de salud (/health)📁 Estructura del RepositorioPlaintextdevops-portfolio-project/
 ├── .github/
 │   └── workflows/

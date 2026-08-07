@@ -1,0 +1,18 @@
+# Entornos virtuales y dependencias locales
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de control de versiones y editores
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Logs y temporales
+*.log
+.DS_Store
+Thumbs.db

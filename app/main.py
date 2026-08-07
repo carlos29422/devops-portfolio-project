@@ -1,3 +1,4 @@
+import os
 import time
 from flask import Flask, jsonify, request
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
@@ -55,5 +56,7 @@ def metrics():
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 if __name__ == '__main__':
-    # Escucha en todas las interfaces en el puerto 8080 (ideal para contenedores)
-    app.run(host='0.0.0.0', port=5000)
+    # Lee la variable de entorno PORT. Si no existe (ej. ejecutas en local Windows), usa 5000.
+    # Dentro de Docker, como definimos 'ENV PORT=8080', usará automáticamente 8080.
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

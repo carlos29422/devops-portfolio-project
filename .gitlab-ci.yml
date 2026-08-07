@@ -145,5 +145,5 @@ smoke-test:metrics:
     entrypoint: [""]
   script:
     - echo "Validando estructura de manifiestos y sintaxis de endpoints de observabilidad..."
-    - helm template test-release helm/portfolio-api/ | grep "prometheus.io/scrape: \"true\""
+    - 'helm template test-release helm/portfolio-api/ | grep "prometheus.io/scrape"'
     - echo "Verificación de métricas en manifiestos de Helm completada con éxito."

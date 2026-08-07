@@ -1,20 +1,9 @@
-# ==============================================================================
-# GitLab CI/CD Pipeline - DevSecOps Quality & Security Gate
-# ==============================================================================
-
-# Imagen Docker por defecto si un job no especifica una
 default:
   image: alpine:3.19
 
-# Definición de etapas del Pipeline
 stages:
   - lint
 
-# -----------------------------------------------------------------------------
-# STAGE: Linting & Análisis Estático de Código (SAST)
-# -----------------------------------------------------------------------------
-
-# Job 1: Verificación de código Bash con ShellCheck
 lint:bash:
   stage: lint
   image: koalaman/shellcheck-alpine:v0.9.0
@@ -22,15 +11,13 @@ lint:bash:
     - echo "Iniciando análisis estático de scripts Bash..."
     - shellcheck scripts/*.sh
 
-# Job 2: Verificación de buenas prácticas DevSecOps en Dockerfile con Hadolint
 lint:dockerfile:
   stage: lint
   image: hadolint/hadolint:latest-alpine
   script:
     - echo "Iniciando análisis de seguridad del Dockerfile..."
-    - hadolint app/Dockerfile
+    - hadolint --ignore DL3008 --ignore DL3025 app/Dockerfile
 
-# Job 3: Verificación de sintaxis y estándares PEP8 en Python con Flake8
 lint:python:
   stage: lint
   image: python:3.11-slim

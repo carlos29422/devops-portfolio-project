@@ -40,6 +40,7 @@ lint:python:
 lint:terraform:
   stage: lint
   image: hashicorp/terraform:1.5.7
+  entrypoint: [""]
   script:
     - echo "Verificando formato y sintaxis de Terraform..."
     - cd terraform

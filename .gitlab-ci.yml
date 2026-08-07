@@ -1,5 +1,5 @@
 # ==============================================================================
-# GitLab CI/CD Pipeline - DevSecOps Quality, Build, Security & IaC Scan
+# GitLab CI/CD Pipeline - DevSecOps Quality, Build, Security, IaC & CD
 # ==============================================================================
 
 default:
@@ -9,6 +9,7 @@ stages:
   - lint
   - build
   - security
+  - deploy
 
 # -----------------------------------------------------------------------------
 # STAGE 1: Linting & Análisis Estático
@@ -107,3 +108,27 @@ security:iac-scan:
     - echo "Iniciando análisis estático de seguridad en código IaC (Terraform y K8s)..."
     - trivy config terraform/
     - trivy config k8s/
+
+# -----------------------------------------------------------------------------
+# STAGE 4: Continuous Deployment (CD) - Simulation & Helm Render
+# -----------------------------------------------------------------------------
+
+deploy:staging:
+  stage: deploy
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: [""]
+  script:
+    - echo "Simulando despliegue de Helm en entorno Staging/Dev..."
+    - helm template portfolio-api-dev helm/portfolio-api/ -f helm/portfolio-api/values-dev.yaml --set image.tag=$CI_COMMIT_SHA
+
+deploy:production:
+  stage: deploy
+  image:
+    name: alpine/helm:3.14.0
+    entrypoint: [""]
+  script:
+    - echo "Simulando renderizado de manifiestos para entorno Producción..."
+    - helm template portfolio-api-prod helm/portfolio-api/ -f helm/portfolio-api/values-prod.yaml --set image.tag=$CI_COMMIT_SHA
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"

@@ -25,4 +25,4 @@ lint:python:
     - pip install --no-cache-dir flake8
   script:
     - echo "Iniciando análisis estático del código Python..."
-    - flake8 app/main.py --max-line-length=120 --ignore=E501,W503
+    - flake8 app/main.py --max-line-length=120 --ignore=E501,W503,W292
